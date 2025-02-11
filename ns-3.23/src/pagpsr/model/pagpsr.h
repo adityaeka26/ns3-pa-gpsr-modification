@@ -149,6 +149,7 @@ private:
   UnicastForwardCallback m_cucb;
 
   std::map<uint32_t, std::vector<double>> m_speedHistory;
+  std::map<uint32_t, double> m_geometricAverage;
 };
 }
 }
