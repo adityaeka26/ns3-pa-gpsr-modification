@@ -1,19 +1,28 @@
-This is ns-3-allinone.
+# Modification of the PA-GPSR Routing Protocol
 
-If you have downloaded this in tarball release format, this directory
-contains some released ns-3 version, along with 3rd party components
-necessary to support all optional ns-3 features, such as Python
-bindings and the Network Animator.  In this case, just run the
-script build.py; all the components, plus ns-3 itself, will thus be
-built.  This directory also contains the bake build tool, which allows
-access to several additional modules including the Network Simulation
-Cradle, Direct Code Execution environment, and click and openflow 
-extensions for ns-3.
+This study presents a modification of the Path-Aware Greedy Perimeter Stateless Routing (PA-GPSR) protocol by integrating vehicle speed and direction as key factors in selecting forwarding nodes. This enhancement improves route stability in highly dynamic network conditions, such as vehicular ad hoc networks (VANETs)
 
-If you have downloaded this from mercurial, the download.py script will
-download bake, netanim, pybindgen, and ns-3-dev.  The usage to use
-basic ns-3 (netanim and ns-3-dev) is to type:
-./download.py
-./build.py
-and cd into ns-3-dev for further work.  Consult the bake documentation
-on how to use bake to access optional ns-3 components.
+## Requirements
+To ensure compatibility, the following system requirements must be met:
+- Python: Version 2.7
+- Operating System: Linux
+- System Architecture: amd64 (ARM is not supported yet)
+
+## Installation Guides
+Follow these steps to install and configure the modified PA-GPSR protocol in the ns-3.23 network simulator:
+1. Navigate to the ns-3.23 Directory
+    ```
+    cd ns3.23
+    ```
+2. Configure ns-3
+    ```
+    CXXFLAGS="-Wall -std=c++0x" ./waf configure --enable-examples
+    ./waf
+    ```
+3. Build and Install ns-3
+    ```
+    sudo ./waf install
+    ```
+
+## Authors
+- Aditya Eka Bagaskara
