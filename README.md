@@ -4,7 +4,8 @@ This study presents a modification of the Path-Aware Greedy Perimeter Stateless 
 
 ## Requirements
 To ensure compatibility, the following system requirements must be met:
-- Python: Version 2.7
+- Python
+- : Version 2.7
 - Operating System: Linux
 - System Architecture: amd64 (ARM is not supported yet)
 
