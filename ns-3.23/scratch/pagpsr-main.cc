@@ -124,19 +124,19 @@ int main (int argc, char **argv)
 }
 
 //-----------------------------------------------------------------------------
-GpsrExample::GpsrExample():
+GpsrExample::GpsrExample () :
   // Number of Nodes
-  size(30),
+  size (30),
   // Grid Width
   gridWidth(10),
   // Distance between nodes
-  step(100),
+  step (100),
   // Simulation time
-  totalTime(30),
+  totalTime (200),
   // Generate capture files for each node
-  pcap(false),
+  pcap (false),
   //seed to generate random numbers
-  seed(1395),
+  seed (1394),
   path("outputs/"),
   packetsize(512),
   algorithm("pagpsr"),
@@ -144,31 +144,35 @@ GpsrExample::GpsrExample():
   speed(15),
   drift(0),
   nPairs(15),
-  phyMode("OfdmRate3MbpsBW10MHz")
+  phyMode ("OfdmRate3MbpsBW10MHz")
 
-{}
+{
+}
+
 
 bool
-GpsrExample::Configure(int argc, char ** argv) {
+GpsrExample::Configure (int argc, char **argv)
+{
+
   CommandLine cmd;
 
-  cmd.AddValue("pcap", "Write PCAP traces.", pcap);
-  cmd.AddValue("size", "Number of nodes.", size);
-  cmd.AddValue("time", "Simulation time, s.", totalTime);
-  cmd.AddValue("step", "Grid step, m", step);
-  cmd.AddValue("seed", "seed value", seed);
-  cmd.AddValue("path", "path of results file", path);
-  cmd.AddValue("conn", "number of conections", nPairs);
-  cmd.AddValue("algorithm", "routing algorithm", algorithm);
-  cmd.AddValue("newfile", "create new result file", newfile);
-  cmd.AddValue("speed", "node speed", speed);
+  cmd.AddValue ("pcap", "Write PCAP traces.", pcap);
+  cmd.AddValue ("size", "Number of nodes.", size);
+  cmd.AddValue ("time", "Simulation time, s.", totalTime);
+  cmd.AddValue ("step", "Grid step, m", step);
+  cmd.AddValue ("seed", "seed value", seed);
+  cmd.AddValue ("path", "path of results file", path);
+  cmd.AddValue ("conn", "number of conections", nPairs);
+  cmd.AddValue ("algorithm", "routing algorithm", algorithm);
+  cmd.AddValue ("newfile", "create new result file", newfile);
+  cmd.AddValue ("speed", "node speed", speed);
 
-  // disable fragmentation for frames below 2200 bytes
-  Config::SetDefault("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue("2200"));
+// disable fragmentation for frames below 2200 bytes
+  Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue ("2200"));
   // turn off RTS/CTS for frames below 2200 bytes
-  Config::SetDefault("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue("500"));
-  Config::SetDefault("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue(phyMode));
-  cmd.Parse(argc, argv);
+  Config::SetDefault ("ns3::WifiRemoteStationManager::RtsCtsThreshold", StringValue ("500"));
+  Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode", StringValue (phyMode));
+  cmd.Parse (argc, argv);
   return true;
 }
 
@@ -250,96 +254,107 @@ GpsrExample::writeToFile(uint32_t lostPackets, uint32_t totalTx, uint32_t totalR
 }
 
 void
-GpsrExample::Run() {
+GpsrExample::Run ()
+{
 
+  
   SeedManager::SetSeed(seed);
+  
+  CreateNodes ();
+  CreateDevices ();
+  InstallInternetStack ();
+  InstallApplications ();
 
-  CreateNodes();
-  CreateDevices();
-  InstallInternetStack();
-  InstallApplications();
+if (algorithm=="gpsr"){
+  std::cout<<"Using GPSR algorithm...\n";
+  GpsrHelper gpsr;
+  gpsr.Install ();
 
-  if (algorithm == "gpsr") {
-    std::cout << "Using GPSR algorithm...\n";
-    GpsrHelper gpsr;
-    gpsr.Install();
+}else{
+  if (algorithm=="mmgpsr"){
+    std::cout<<"Using MMGPSR algorithm...\n";
+    MMGpsrHelper mmgpsr;
+    mmgpsr.Install ();
+  }else{
+    std::cout<<"Using PA-GPSR algorithm...\n";
+    PAGpsrHelper pagpsr;
+    pagpsr.Install ();
 
-  } else {
-    if (algorithm == "mmgpsr") {
-      std::cout << "Using MMGPSR algorithm...\n";
-      MMGpsrHelper mmgpsr;
-      mmgpsr.Install();
-    } else {
-      std::cout << "Using PA-GPSR algorithm...\n";
-      PAGpsrHelper pagpsr;
-      pagpsr.Install();
-
-    }
   }
+}
   std::cout << "Starting simulation for " << totalTime << " s ...\n";
   std::cout << "Starting simulation for speed " << speed << " ms ...\n";
 
-  for (int i = 1; i <= totalTime; i++) {
+  for (int i=1; i<=totalTime; i++){
     if (i % 10 == 0) // at every 10s
-      Simulator::Schedule(Seconds(i), & handler, i);
+      Simulator::Schedule(Seconds(i), &handler, i);
   }
+
 
   FlowMonitorHelper flowmon;
-  Ptr < FlowMonitor > monitor = flowmon.InstallAll();
-  Simulator::Stop(Seconds(totalTime));
-  Simulator::Run();
+  Ptr<FlowMonitor> monitor = flowmon.InstallAll();
+  Simulator::Stop (Seconds (totalTime));
+  Simulator::Run ();
 
-  //Print per flow statstics
-  monitor -> CheckForLostPackets();
-  Ptr < Ipv4FlowClassifier > classifier = DynamicCast < Ipv4FlowClassifier > (flowmon.GetClassifier());
-  std::map < FlowId, FlowMonitor::FlowStats > stats = monitor -> GetFlowStats();
-  uint32_t lostPackets = 0;
-  uint32_t totalRx = 0;
-  uint32_t totalTx = 0;
-  double delay = 0;
-  double count = 0;
-  double hopCount = 0;
+ //Print per flow statstics
+monitor->CheckForLostPackets();
+Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmon.GetClassifier());
+std::map<FlowId,FlowMonitor::FlowStats> stats = monitor->GetFlowStats();
+uint32_t lostPackets = 0;
+uint32_t totalRx=0;
+uint32_t totalTx=0;
+double delay=0;
+double count=0;
+double hopCount=0;
 
-  for (std::map < FlowId, FlowMonitor::FlowStats > ::const_iterator i = stats.begin(); i != stats.end(); ++i) {
-    Ipv4FlowClassifier::FiveTuple t = classifier -> FindFlow(i -> first);
 
-    if (i -> second.rxPackets != 0) {
-      totalRx += i -> second.rxPackets;
-      totalTx += i -> second.txPackets;
-      hopCount += (i -> second.timesForwarded / i -> second.rxPackets + 1); // this hopCount is not suitable for PA-GPSR because of packet duplication. For PA-GPSR HopCount calculation we need to use the IP TTL field instead (not implemented yet). This hopCount can be helpful to calculate network yield though.   
-      delay += (i -> second.delaySum.GetSeconds() / i -> second.rxPackets);
-      count++;
-      lostPackets += i -> second.lostPackets;
+for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i= stats.begin();i!=stats.end();++i)
+{
+  Ipv4FlowClassifier::FiveTuple t=classifier->FindFlow(i->first);
+
+   if(i->second.rxPackets!=0)
+     {
+      	totalRx+=i->second.rxPackets;
+      	totalTx+=i->second.txPackets;
+      	hopCount+=(i->second.timesForwarded/i->second.rxPackets+1); // this hopCount is not suitable for PA-GPSR because of packet duplication. For PA-GPSR HopCount calculation we need to use the IP TTL field instead (not implemented yet). This hopCount can be helpful to calculate network yield though.   
+	delay+=(i->second.delaySum.GetSeconds()/i->second.rxPackets);
+	count++;
+        lostPackets += i->second.lostPackets;
     }
-  }
+}
 
-  writeToFile(lostPackets, totalTx, totalRx, hopCount, count, delay);
+writeToFile(lostPackets, totalTx, totalRx, hopCount, count, delay);
 
-  monitor -> SerializeToXmlFile("gpsr.flowmon", true, true);
 
-  Simulator::Destroy();
+monitor->SerializeToXmlFile("gpsr.flowmon",true,true);
+
+  Simulator::Destroy ();
 }
 
 void
-GpsrExample::Report(std::ostream & ) {}
+GpsrExample::Report (std::ostream &)
+{
+}
 
 void
-GpsrExample::CreateNodes() {
+GpsrExample::CreateNodes ()
+{
 
-  std::cout << "Creating  " << (unsigned) size << " nodes .." << " with " << nPairs << " pairs..." << "\n";
-  nodes.Create(size);
+ std::cout << "Creating  " << (unsigned)size << " nodes .."<<" with "<<nPairs<<" pairs..." <<"\n";
+  nodes.Create (size);
   // Name nodes
-  for (uint32_t i = 0; i < size; ++i) {
-    std::ostringstream os;
-    os << "node-" << i;
-    Names::Add(os.str(), nodes.Get(i));
+  for (uint32_t i = 0; i < size; ++i)
+     {
+       std::ostringstream os;
+       os << "node-" << i;
+       Names::Add (os.str (), nodes.Get (i));
 
-  }
-
+     }
+     
   std::string m_traceFile;
-  m_traceFile = "results/tclFiles/speed/" + std::to_string(speed) + "/newNs2mobility" + std::to_string(size) + ".tcl";
-  Ns2MobilityHelper mobility = Ns2MobilityHelper(m_traceFile); //for tracefile
-  mobility.Install();
+  m_traceFile = "results/tclFiles/speed/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+".tcl";
+  Ns2MobilityHelper mobility= Ns2MobilityHelper (m_traceFile);//for tracefile
+  mobility.Install ();
 
   AllNodes.Add(nodes);
 
