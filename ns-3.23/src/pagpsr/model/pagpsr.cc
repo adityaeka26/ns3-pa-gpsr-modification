@@ -635,7 +635,6 @@ void RoutingProtocol::UpdateSpeedHistory (Ptr<Node> node)
   uint32_t nodeId = node->GetId();
   std::cout << "Node ID: " << nodeId << std::endl;
   Ptr<MobilityModel> mobility = node->GetObject<MobilityModel>();
-  std::cout << mobility << std::endl;
   if (mobility)
     {
       Vector velocity = mobility->GetVelocity();
@@ -650,13 +649,11 @@ void RoutingProtocol::UpdateSpeedHistory (Ptr<Node> node)
 
       // Calculate the geometric average
       double geometricAverage = CalculateGeometricAverage(m_speedHistory[nodeId]);
-      m_geometricAverage[nodeId] = geometricAverage;
-      std::cout << "Node " << nodeId << " Geometric Average Speed: " << geometricAverage << std::endl;
       NS_LOG_INFO("Node " << nodeId << " Geometric Average Speed: " << geometricAverage);
     }
 
   // Schedule the next update
-  Simulator::Schedule(HelloInterval, &RoutingProtocol::UpdateSpeedHistory, this, node);
+  Simulator::Schedule(Seconds(1.0), &RoutingProtocol::UpdateSpeedHistory, this, node);
 }
 
 double RoutingProtocol::CalculateGeometricAverage (const std::vector<double>& speeds)
