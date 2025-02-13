@@ -745,9 +745,50 @@ RoutingProtocol::HelloTimerExpire ()
   HelloIntervalTimer.Schedule (HelloInterval + JITTER);
 }
 
+// MODIFICATION: Add UpdatePositionAndSpeed method
+void
+RoutingProtocol::UpdatePositionAndSpeed()
+{
+  Ptr<MobilityModel> mobility = m_ipv4->GetObject<MobilityModel>();
+  if (mobility)
+  {
+    Vector newPosition = mobility->GetPosition();
+    if (m_lastPosition.x != 0 || m_lastPosition.y != 0)
+    {
+      Vector velocity = mobility->GetVelocity();
+      double speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+      m_speedHistory.push_back(speed);
+      m_avgGeometricSpeed = CalculateAverageGeometricSpeed();
+    }
+    m_lastPosition = m_currentPosition;
+    m_currentPosition = newPosition;
+  }
+}
+
+// MODIFICATION: Add CalculateAverageGeometricSpeed method
+double
+RoutingProtocol::CalculateAverageGeometricSpeed() const
+{
+  if (m_speedHistory.empty())
+  {
+    return 0.0;
+  }
+  double product = 1.0;
+  std::cout << "m_speedHistory:" << std::endl;
+  for (double speed : m_speedHistory)
+  {
+    std::cout << speed << std::endl;
+    product *= speed;
+  }
+  return pow(product, 1.0 / m_speedHistory.size());
+}
+
 void
 RoutingProtocol::SendHello ()
 {
+  // MODIFICATION: Call UpdatePositionAndSpeed method
+  UpdatePositionAndSpeed();
+
   NS_LOG_FUNCTION (this);
   double positionX;
   double positionY;
@@ -763,7 +804,10 @@ RoutingProtocol::SendHello ()
     {
       Ptr<Socket> socket = j->first;
       Ipv4InterfaceAddress iface = j->second;
-      HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY));
+      // HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY));
+      // std::cout << "m_currentPosition.x: " << m_currentPosition.x << " m_currentPosition.y: " << m_currentPosition.y << " m_lastPosition.x: " << m_lastPosition.x << " m_lastPosition.y: " << m_lastPosition.y << " m_avgGeometricSpeed: " << m_avgGeometricSpeed << std::endl;
+      // MODIFICATION: Send the current position, last position and average geometric speed in the HelloHeader
+      HelloHeader helloHeader(m_currentPosition.x, m_currentPosition.y, m_lastPosition.x, m_lastPosition.y, m_avgGeometricSpeed);
 
       Ptr<Packet> packet = Create<Packet> ();
       packet->AddHeader (helloHeader);

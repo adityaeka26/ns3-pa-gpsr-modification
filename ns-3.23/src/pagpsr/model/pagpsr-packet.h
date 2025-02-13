@@ -64,7 +64,8 @@ class HelloHeader : public Header
 {
 public:
   /// c-tor
-  HelloHeader (uint64_t originPosx = 0, uint64_t originPosy = 0);
+  // MODIFICATION: add last position and average geometric speed
+  HelloHeader (uint64_t originPosx = 0, uint64_t originPosy = 0, uint64_t lastPosx = 0, uint64_t lastPosy = 0, double avgSpeed = 0.0);
 
   ///\name Header serialization/deserialization
   //\{
@@ -94,13 +95,43 @@ public:
   {
     return m_originPosy;
   }
+
+  // MODIFICATION: add methods for last position and average geometric speed
+  void SetLastPosx (uint64_t posx)
+  {
+    m_lastPosx = posx;
+  }
+  uint64_t GetLastPosx () const
+  {
+    return m_lastPosx;
+  }
+  void SetLastPosy (uint64_t posy)
+  {
+    m_lastPosy = posy;
+  }
+  uint64_t GetLastPosy () const
+  {
+    return m_lastPosy;
+  }
+  void SetAvgSpeed (double speed)
+  {
+    m_avgSpeed = speed;
+  }
+  double GetAvgSpeed () const
+  {
+    return m_avgSpeed;
+  }
+
   //\}
 
-
+  // MODIFICATION: add last position and average geometric speed
   bool operator== (HelloHeader const & o) const;
 private:
-  uint64_t         m_originPosx;          ///< Originator Position x
-  uint64_t         m_originPosy;          ///< Originator Position x
+  uint64_t m_originPosx;          ///< Originator Position x
+  uint64_t m_originPosy;          ///< Originator Position y
+  uint64_t m_lastPosx;            ///< Last Position x
+  uint64_t m_lastPosy;            ///< Last Position y
+  double m_avgSpeed;              ///< Average Geometric Speed
 };
 
 std::ostream & operator<< (std::ostream & os, HelloHeader const &);

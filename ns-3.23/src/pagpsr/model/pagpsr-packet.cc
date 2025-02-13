@@ -104,9 +104,13 @@ operator<< (std::ostream & os, TypeHeader const & h)
 //-----------------------------------------------------------------------------
 // HELLO
 //-----------------------------------------------------------------------------
-HelloHeader::HelloHeader (uint64_t originPosx, uint64_t originPosy)
+// MODIFICATION: add last position and average geometric speed
+HelloHeader::HelloHeader (uint64_t originPosx, uint64_t originPosy, uint64_t lastPosx, uint64_t lastPosy, double avgSpeed)
   : m_originPosx (originPosx),
-    m_originPosy (originPosy)
+    m_originPosy (originPosy),
+    m_lastPosx (lastPosx),
+    m_lastPosy (lastPosy),
+    m_avgSpeed (avgSpeed)
 {
 }
 
@@ -131,41 +135,51 @@ HelloHeader::GetInstanceTypeId () const
 uint32_t
 HelloHeader::GetSerializedSize () const
 {
-  return 16;
+  return 40;
 }
 
+// MODIFICATION: add last position and average geometric speed
 void
 HelloHeader::Serialize (Buffer::Iterator i) const
 {
-  NS_LOG_DEBUG ("Serialize X " << m_originPosx << " Y " << m_originPosy);
-
+  NS_LOG_DEBUG ("Serialize X " << m_originPosx << " Y " << m_originPosy << " LastX " << m_lastPosx << " LastY " << m_lastPosy << " AvgSpeed " << m_avgSpeed);
 
   i.WriteHtonU64 (m_originPosx);
   i.WriteHtonU64 (m_originPosy);
-
+  i.WriteHtonU64 (m_lastPosx);
+  i.WriteHtonU64 (m_lastPosy);
+  i.WriteHtonU64 (*reinterpret_cast<const uint64_t*>(&m_avgSpeed));
 }
 
+// MODIFICATION: add last position and average geometric speed
 uint32_t
 HelloHeader::Deserialize (Buffer::Iterator start)
 {
-
   Buffer::Iterator i = start;
 
   m_originPosx = i.ReadNtohU64 ();
   m_originPosy = i.ReadNtohU64 ();
+  m_lastPosx = i.ReadNtohU64 ();
+  m_lastPosy = i.ReadNtohU64 ();
+  uint64_t avgSpeedInt = i.ReadNtohU64 ();
+  m_avgSpeed = *reinterpret_cast<const double*>(&avgSpeedInt);
 
-  NS_LOG_DEBUG ("Deserialize X " << m_originPosx << " Y " << m_originPosy);
+  NS_LOG_DEBUG ("Deserialize X " << m_originPosx << " Y " << m_originPosy << " LastX " << m_lastPosx << " LastY " << m_lastPosy << " AvgSpeed " << m_avgSpeed);
 
   uint32_t dist = i.GetDistanceFrom (start);
   NS_ASSERT (dist == GetSerializedSize ());
   return dist;
 }
 
+// MODIFICATION: add last position and average geometric speed
 void
 HelloHeader::Print (std::ostream &os) const
 {
   os << " PositionX: " << m_originPosx
-     << " PositionY: " << m_originPosy;
+     << " PositionY: " << m_originPosy
+     << " LastPositionX: " << m_lastPosx
+     << " LastPositionY: " << m_lastPosy
+     << " AvgSpeed: " << m_avgSpeed;
 }
 
 std::ostream &

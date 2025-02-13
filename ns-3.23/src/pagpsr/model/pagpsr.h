@@ -146,6 +146,14 @@ private:
   ErrorCallback m_cecb;
   UnicastForwardCallback m_cucb;
 
+  Vector m_currentPosition;
+  Vector m_lastPosition;
+  std::vector<double> m_speedHistory;
+  double m_avgGeometricSpeed;
+
+  void UpdatePositionAndSpeed();
+  double CalculateAverageGeometricSpeed() const;
+
 };
 }
 }
