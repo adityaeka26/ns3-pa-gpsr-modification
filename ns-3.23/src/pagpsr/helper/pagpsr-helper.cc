@@ -63,7 +63,6 @@ PAGpsrHelper::Install (void) const
   NodeContainer c = NodeContainer::GetGlobal ();
   for (NodeContainer::Iterator i = c.Begin (); i != c.End (); ++i)
     {
-      std::cout << "Installing PAGPSR on node " << (*i)->GetId () << std::endl;
       Ptr<Node> node = (*i);
       Ptr<UdpL4Protocol> udp = node->GetObject<UdpL4Protocol> ();
       Ptr<pagpsr::RoutingProtocol> pagpsr = node->GetObject<pagpsr::RoutingProtocol> ();

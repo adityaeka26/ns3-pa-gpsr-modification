@@ -162,60 +162,65 @@ PositionTable::Clear ()
  * \param nodePos the position of the node that has the packet
  * \return Ipv4Address of the next hop, Ipv4Address::GetZero () if no nighbour was found in greedy mode
  */
-Ipv4Address
-PositionTable::BestNeighbor(Vector position, Vector nodePos, std::pair < std::string, std::pair < uint32_t, Ipv4Address > > m_pair, Ipv4Address dest) {
+Ipv4Address 
+PositionTable::BestNeighbor (Vector position, Vector nodePos, std::pair<std::string, std::pair<uint32_t,Ipv4Address> > m_pair, Ipv4Address dest)
+{
 
-  Purge();
+  Purge ();
 
-  double initialDistance = CalculateDistance(nodePos, position);
-  std::pair < bool, std::string > sent;
+  double initialDistance = CalculateDistance (nodePos, position);
+  std::pair<bool,std::string> sent;
   bool WasInRec;
 
-  /* Vector bestN;
+ /* Vector bestN;
   double dBD;
   double dSB;
   double lambda = 0.3;
   double dmax;
 */
 
-  if (m_table.empty()) {
-    NS_LOG_DEBUG("BestNeighbor table is empty; Position: " << position);
-    return Ipv4Address::GetZero();
-  } //if table is empty (no neighbours)
+  if (m_table.empty ())
+    {
+      NS_LOG_DEBUG ("BestNeighbor table is empty; Position: " << position);
+      return Ipv4Address::GetZero ();
+    }     //if table is empty (no neighbours)
 
-  Ipv4Address bestFoundID = m_table.begin() -> first;
-  double bestFoundDistance = CalculateDistance(m_table.begin() -> second.first.first, position);
-  std::map < Ipv4Address, std::pair < std::pair < Vector, Time > , bool > > ::iterator i;
+  Ipv4Address bestFoundID = m_table.begin ()->first;
+  double bestFoundDistance = CalculateDistance (m_table.begin ()->second.first.first, position);
+  std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> >::iterator i;
 
-  for (i = m_table.begin(); !(i == m_table.end()); i++) {
-    sent = m_rst.FindPacket(i -> first, m_pair);
-    WasInRec = m_rtable.FindPacket(i -> first, dest);
-    if (sent.first) {
-      continue;
-    }
-    if (bestFoundDistance > CalculateDistance(i -> second.first.first, position)) {
-      if (WasInRec == false) {
-        bestFoundID = i -> first;
-        bestFoundDistance = CalculateDistance(i -> second.first.first, position);
-      } else {
-        continue;
+  for (i = m_table.begin (); !(i == m_table.end ()); i++)
+    {
+      sent = m_rst.FindPacket(i->first, m_pair);
+      WasInRec = m_rtable.FindPacket(i->first,dest);
+      if (sent.first){
+	continue;
       }
-
+      if (bestFoundDistance > CalculateDistance (i->second.first.first, position))
+        {
+	  if(WasInRec == false){
+          	bestFoundID = i->first;
+	  	bestFoundDistance = CalculateDistance (i->second.first.first, position);
+	  }else{
+		continue;
+	  }
+	 
+        }
     }
+
+  if (m_pair.second.second == Ipv4Address ("102.102.102.102")){
+	m_pair.second.first = 0;
+	m_pair.second.second = Ipv4Address ("0.0.0.0");
   }
 
-  if (m_pair.second.second == Ipv4Address("102.102.102.102")) {
-    m_pair.second.first = 0;
-    m_pair.second.second = Ipv4Address("0.0.0.0");
-  }
+  if(initialDistance > bestFoundDistance){
 
-  if (initialDistance > bestFoundDistance) {
+    	m_rst.AddEntry(bestFoundID, m_pair);
 
-    m_rst.AddEntry(bestFoundID, m_pair);
-    std::cout << "Best Neighbor: " << bestFoundID << std::endl;
     return bestFoundID;
-  } else
-    return Ipv4Address::GetZero(); //so it enters Recovery-mode
+  }
+  else
+    return Ipv4Address::GetZero (); //so it enters Recovery-mode
 
 }
 

@@ -629,48 +629,7 @@ RoutingProtocol::FindSocketWithInterfaceAddress (Ipv4InterfaceAddress addr ) con
   return socket;
 }
 
-void RoutingProtocol::UpdateSpeedHistory (Ptr<Node> node)
-{
-  std::cout << "UpdateSpeedHistory" << std::endl;
-  uint32_t nodeId = node->GetId();
-  std::cout << "Node ID: " << nodeId << std::endl;
-  Ptr<MobilityModel> mobility = node->GetObject<MobilityModel>();
-  if (mobility)
-    {
-      Vector velocity = mobility->GetVelocity();
-      double speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
 
-      // Update speed history
-      if (m_speedHistory[nodeId].size() >= 50)
-        {
-          m_speedHistory[nodeId].erase(m_speedHistory[nodeId].begin());
-        }
-      m_speedHistory[nodeId].push_back(speed);
-
-      // Calculate the geometric average
-      double geometricAverage = CalculateGeometricAverage(m_speedHistory[nodeId]);
-      NS_LOG_INFO("Node " << nodeId << " Geometric Average Speed: " << geometricAverage);
-    }
-
-  // Schedule the next update
-  Simulator::Schedule(Seconds(1.0), &RoutingProtocol::UpdateSpeedHistory, this, node);
-}
-
-double RoutingProtocol::CalculateGeometricAverage (const std::vector<double>& speeds)
-{
-  if (speeds.empty())
-    {
-      return 0.0;
-    }
-
-  double product = 1.0;
-  for (double speed : speeds)
-    {
-      product *= speed;
-    }
-
-  return std::pow(product, 1.0 / speeds.size());
-}
 
 void RoutingProtocol::NotifyAddAddress (uint32_t interface, Ipv4InterfaceAddress address)
 {
@@ -864,7 +823,6 @@ RoutingProtocol::Start ()
       break;
     }
 
-    Simulator::Schedule(HelloInterval, &RoutingProtocol::UpdateSpeedHistory, this, m_ipv4->GetObject<Node>());
 }
 
 Ptr<Ipv4Route>

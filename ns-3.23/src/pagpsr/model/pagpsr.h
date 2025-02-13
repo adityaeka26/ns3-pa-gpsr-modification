@@ -56,8 +56,6 @@ public:
   int GetProtocolNumber (void) const;
   virtual void AddHeaders (Ptr<Packet> p, Ipv4Address source, Ipv4Address destination, uint8_t protocol, Ptr<Ipv4Route> route);
   virtual void NotifyInterfaceDown (uint32_t interface);
-  virtual void UpdateSpeedHistory (Ptr<Node> node);
-  virtual double CalculateGeometricAverage (const std::vector<double>& speeds);
   virtual void NotifyAddAddress (uint32_t interface, Ipv4InterfaceAddress address);
   virtual void NotifyRemoveAddress (uint32_t interface, Ipv4InterfaceAddress address);
   virtual void SetIpv4 (Ptr<Ipv4> ipv4);
@@ -148,7 +146,6 @@ private:
   ErrorCallback m_cecb;
   UnicastForwardCallback m_cucb;
 
-  std::map<uint32_t, std::vector<double>> m_speedHistory;
 };
 }
 }
