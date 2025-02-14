@@ -28,10 +28,11 @@ PositionTable::GetEntryUpdateTime (Ipv4Address id)
   return i->second.first.second;
 }
 
+// MODIFICATION: Add last position and average speed in neighbor table
 void 
-PositionTable::AddEntry (Ipv4Address id, Vector position, bool trustStatus)
+PositionTable::AddEntry (Ipv4Address id, Vector position, Vector lastPosition, double avgSpeed, bool trustStatus)
 {
-
+  // std::cout << "lastPosition.x " << lastPosition.x << std::endl;
   std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> >::iterator i = m_table.find (id);
   if (i != m_table.end () || id.IsEqual (i->first))
     {
@@ -39,10 +40,18 @@ PositionTable::AddEntry (Ipv4Address id, Vector position, bool trustStatus)
       m_table.erase (id);
       m_table.insert (std::make_pair (id, std::make_pair (std::make_pair (position, Simulator::Now ()),trustStatus)));
 
+      m_table_last.erase(id);
+      m_table_last.insert(std::make_pair(id, std::make_pair(std::make_pair(lastPosition, Simulator::Now()), trustStatus)));
+
+      avg_speed.erase(id);
+      avg_speed.insert(std::make_pair(id, std::make_pair(std::make_pair(avgSpeed, Simulator::Now()), trustStatus)));
+
       return;
     }
   
   m_table.insert (std::make_pair (id, std::make_pair (std::make_pair (position, Simulator::Now ()),trustStatus)));
+  m_table_last.insert(std::make_pair(id, std::make_pair(std::make_pair(lastPosition, Simulator::Now()), trustStatus)));
+  avg_speed.insert(std::make_pair(id, std::make_pair(std::make_pair(avgSpeed, Simulator::Now()), trustStatus)));
 }
 
 void 
@@ -162,65 +171,105 @@ PositionTable::Clear ()
  * \param nodePos the position of the node that has the packet
  * \return Ipv4Address of the next hop, Ipv4Address::GetZero () if no nighbour was found in greedy mode
  */
-Ipv4Address 
-PositionTable::BestNeighbor (Vector position, Vector nodePos, std::pair<std::string, std::pair<uint32_t,Ipv4Address> > m_pair, Ipv4Address dest)
-{
+// MODIFICATION: Calculate best neighbor by considering the average speed and direction of the neighbor nodes
+Ipv4Address
+PositionTable::BestNeighbor(Vector position, Vector nodePos, std::pair < std::string, std::pair < uint32_t, Ipv4Address > > m_pair, Ipv4Address dest, double currentNodeAvgSpeed) {
 
-  Purge ();
+  Purge();
 
-  double initialDistance = CalculateDistance (nodePos, position);
-  std::pair<bool,std::string> sent;
+  double initialDistance = CalculateDistance(nodePos, position);
+  std::pair < bool, std::string > sent;
   bool WasInRec;
 
- /* Vector bestN;
+  /* Vector bestN;
   double dBD;
   double dSB;
   double lambda = 0.3;
   double dmax;
 */
 
-  if (m_table.empty ())
-    {
-      NS_LOG_DEBUG ("BestNeighbor table is empty; Position: " << position);
-      return Ipv4Address::GetZero ();
-    }     //if table is empty (no neighbours)
+  if (m_table.empty()) {
+    NS_LOG_DEBUG("BestNeighbor table is empty; Position: " << position);
+    return Ipv4Address::GetZero();
+  } //if table is empty (no neighbours)
 
-  Ipv4Address bestFoundID = m_table.begin ()->first;
-  double bestFoundDistance = CalculateDistance (m_table.begin ()->second.first.first, position);
-  std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> >::iterator i;
+  Ipv4Address bestFoundID = m_table.begin() -> first;
+  double bestFoundDistance = CalculateDistance(m_table.begin() -> second.first.first, position);
+  std::map < Ipv4Address, std::pair < std::pair < Vector, Time > , bool > > ::iterator i;
 
-  for (i = m_table.begin (); !(i == m_table.end ()); i++)
-    {
-      sent = m_rst.FindPacket(i->first, m_pair);
-      WasInRec = m_rtable.FindPacket(i->first,dest);
-      if (sent.first){
-	continue;
+  for (i = m_table.begin(); !(i == m_table.end()); i++) {
+    sent = m_rst.FindPacket(i -> first, m_pair);
+    WasInRec = m_rtable.FindPacket(i -> first, dest);
+    if (sent.first) {
+      continue;
+    }
+    if (bestFoundDistance > CalculateDistance(i -> second.first.first, position)) {
+      if (WasInRec == false) {
+        bestFoundID = i -> first;
+        bestFoundDistance = CalculateDistance(i -> second.first.first, position);
+      } else {
+        continue;
       }
-      if (bestFoundDistance > CalculateDistance (i->second.first.first, position))
-        {
-	  if(WasInRec == false){
-          	bestFoundID = i->first;
-	  	bestFoundDistance = CalculateDistance (i->second.first.first, position);
-	  }else{
-		continue;
-	  }
-	 
-        }
+
     }
 
-  if (m_pair.second.second == Ipv4Address ("102.102.102.102")){
-	m_pair.second.first = 0;
-	m_pair.second.second = Ipv4Address ("0.0.0.0");
+    // // Print last position with id i
+    // auto lastPosIt = m_table_last.find(i->first);
+    // if (lastPosIt != m_table_last.end()) {
+    //   std::cout << "ID: " << i->first << " Last Position: (" << lastPosIt->second.first.first.x << ", " << lastPosIt->second.first.first.y << ")" << std::endl;
+    // }
+
+    // // Print current position with id i
+    // std::cout << "ID: " << i->first << " Current Position: (" << i->second.first.first.x << ", " << i->second.first.first.y << ")" << std::endl;
+
+    // // Print average speed with id i
+    // auto avgSpeedIt = avg_speed.find(i->first);
+    // if (avgSpeedIt != avg_speed.end()) {
+    //   std::cout << "ID: " << i->first << " Average Speed: " << avgSpeedIt->second.first.first << std::endl;
+    // }
   }
 
-  if(initialDistance > bestFoundDistance){
+  if (m_pair.second.second == Ipv4Address("102.102.102.102")) {
+    m_pair.second.first = 0;
+    m_pair.second.second = Ipv4Address("0.0.0.0");
+  }
 
-    	m_rst.AddEntry(bestFoundID, m_pair);
+  if (initialDistance > bestFoundDistance) {
+    double dBD = CalculateDistance(m_table.find(bestFoundID) -> second.first.first, position);
+    double dSB = CalculateDistance(nodePos, m_table.find(bestFoundID) -> second.first.first);
+    double dmax = dBD + (0.3 * dSB);
+
+    double bestFoundIDSpeed = std::abs(currentNodeAvgSpeed - avg_speed.find(bestFoundID) -> second.first.first);
+    for (i = m_table.begin(); !(i == m_table.end()); i++) {
+      double distanceToTarget = CalculateDistance(i -> second.first.first, position);
+    
+      if (distanceToTarget < dmax) {
+        double distanceToTargetFromLastPos = 0;
+        auto lastPosIt = m_table_last.find(i->first);
+        if (lastPosIt != m_table_last.end()) {
+          distanceToTargetFromLastPos = CalculateDistance(lastPosIt->second.first.first, position);
+        }
+
+        if (distanceToTarget < distanceToTargetFromLastPos) {
+          double avgSpeed = avg_speed.find(i->first) -> second.first.first;
+          double speedDiff = std::abs(currentNodeAvgSpeed - avgSpeed);
+          if (speedDiff < bestFoundIDSpeed) {
+            bestFoundID = i -> first;
+            bestFoundIDSpeed = speedDiff;
+
+            // std::cout << "Set Best Found" << std::endl;
+          }
+        }
+
+        // std::cout << "ID: " << i->first << " Distance to target: " << distanceToTarget << std::endl;
+      }
+    }
+
+    m_rst.AddEntry(bestFoundID, m_pair);
 
     return bestFoundID;
-  }
-  else
-    return Ipv4Address::GetZero (); //so it enters Recovery-mode
+  } else
+    return Ipv4Address::GetZero(); //so it enters Recovery-mode
 
 }
 

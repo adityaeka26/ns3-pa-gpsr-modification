@@ -37,7 +37,7 @@ public:
   /**
    * \brief Adds entry in position table
    */
-void AddEntry (Ipv4Address id, Vector position, bool trustStatus);
+void AddEntry (Ipv4Address id, Vector position, Vector lastPosition, double avgSpeed, bool trustStatus);
 
   /**
    * \brief Deletes entry in position table
@@ -82,7 +82,7 @@ void AddEntry (Ipv4Address id, Vector position, bool trustStatus);
    * \param nodePos the position of the node that has the packet
    * \return Ipv4Address of the next hop, Ipv4Address::GetZero () if no nighbour was found in greedy mode
    */
-  Ipv4Address BestNeighbor (Vector position, Vector nodePos, std::pair<std::string, std::pair<uint32_t,Ipv4Address> > m_pair, Ipv4Address dest);
+  Ipv4Address BestNeighbor (Vector position, Vector nodePos, std::pair < std::string, std::pair < uint32_t, Ipv4Address > > m_pair, Ipv4Address dest, double currentNodeAvgSpeed);
 
   Ipv4Address BestRecoveryNeighbor (Ipv4Address previousHopIp, Vector position, Vector nodePos, Vector PreviousPos, Vector recPos, std::pair<std::string, std::pair<uint32_t,Ipv4Address> > m_pair, bool NodeRec);
 Ipv4Address SelectedNeighbor (double m_dmax, Vector position);
@@ -118,6 +118,8 @@ double GetAngleOld (Vector centrePos, Vector refPos, Vector node);
 private:
   Time m_entryLifeTime;
   std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> > m_table;
+  std::map<Ipv4Address, std::pair< std::pair<Vector, Time>, bool> > m_table_last;
+  std::map<Ipv4Address, std::pair< std::pair<double, Time>, bool> > avg_speed;
   // TX error callback
   Callback<void, WifiMacHeader const &> m_txErrorCallback;
   // Process layer 2 TX error notification

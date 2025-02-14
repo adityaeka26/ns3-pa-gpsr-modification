@@ -313,7 +313,8 @@ RoutingProtocol::SendPacketFromQueue (Ipv4Address dst)
     }
   else{
     Vector dstPos = m_locationService->GetPosition (dst);
-    nextHop = m_neighbors.BestNeighbor (dstPos, myPos, origin_packet, dst);
+    // MODIFICATION: Send average geometric speed of the current node
+    nextHop = m_neighbors.BestNeighbor (dstPos, myPos, origin_packet, dst, m_avgGeometricSpeed);
     if (nextHop == Ipv4Address::GetZero ())
       {
         NS_LOG_LOGIC ("Fallback to recovery-mode. Packets to " << dst);
@@ -554,24 +555,31 @@ RoutingProtocol::RecvPAGPSR (Ptr<Socket> socket)
 
   HelloHeader hdr;
   packet->RemoveHeader (hdr);
+  // std::cout << "Hello received\n";
+  // std::cout << hdr.GetLastPosx() << " " << hdr.GetLastPosy() << "\n";
   Vector Position;
   Position.x = hdr.GetOriginPosx ();
   Position.y = hdr.GetOriginPosy ();
+  // MODIFICATION: Add last position and average speed when handling hello messages
+  Vector LastPosition;
+  LastPosition.x = hdr.GetLastPosx();
+  LastPosition.y = hdr.GetLastPosy();
+  double avgGeometricSpeed = hdr.GetAvgSpeed();
   InetSocketAddress inetSourceAddr = InetSocketAddress::ConvertFrom (sourceAddress);
   Ipv4Address sender = inetSourceAddr.GetIpv4 ();
   Ipv4Address receiver = m_socketAddresses[socket].GetLocal ();
 
-  UpdateRouteToNeighbor (sender, receiver, Position, 0);
+  UpdateRouteToNeighbor (sender, receiver, Position, LastPosition, avgGeometricSpeed, 0);
   m_neighbors.ResetTrustStatus(sender);
 
 }
 
 
 void
-RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos, bool trustStatus)
+RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos, Vector LastPos, double AvgSpeed, bool trustStatus)
 {
 
-  m_neighbors.AddEntry (sender, Pos, trustStatus);
+  m_neighbors.AddEntry (sender, Pos, LastPos, AvgSpeed, trustStatus);
 
 }
 
@@ -758,6 +766,9 @@ RoutingProtocol::UpdatePositionAndSpeed()
       Vector velocity = mobility->GetVelocity();
       double speed = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
       m_speedHistory.push_back(speed);
+      if (m_speedHistory.size() > 10) {
+        m_speedHistory.erase(m_speedHistory.begin());
+      }
       m_avgGeometricSpeed = CalculateAverageGeometricSpeed();
     }
     m_lastPosition = m_currentPosition;
@@ -774,10 +785,10 @@ RoutingProtocol::CalculateAverageGeometricSpeed() const
     return 0.0;
   }
   double product = 1.0;
-  std::cout << "m_speedHistory:" << std::endl;
+  // std::cout << "m_speedHistory:" << std::endl;
   for (double speed : m_speedHistory)
   {
-    std::cout << speed << std::endl;
+    // std::cout << speed << std::endl;
     product *= speed;
   }
   return pow(product, 1.0 / m_speedHistory.size());
@@ -808,7 +819,7 @@ RoutingProtocol::SendHello ()
       // std::cout << "m_currentPosition.x: " << m_currentPosition.x << " m_currentPosition.y: " << m_currentPosition.y << " m_lastPosition.x: " << m_lastPosition.x << " m_lastPosition.y: " << m_lastPosition.y << " m_avgGeometricSpeed: " << m_avgGeometricSpeed << std::endl;
       // MODIFICATION: Send the current position, last position and average geometric speed in the HelloHeader
       HelloHeader helloHeader(m_currentPosition.x, m_currentPosition.y, m_lastPosition.x, m_lastPosition.y, m_avgGeometricSpeed);
-
+      // std::cout << helloHeader.GetLastPosx() << std::endl;
       Ptr<Packet> packet = Create<Packet> ();
       packet->AddHeader (helloHeader);
       TypeHeader tHeader (PAGPSRTYPE_HELLO);
@@ -1050,7 +1061,8 @@ RoutingProtocol::Forwarding (Ptr<const Packet> packet, const Ipv4Header & header
     {
       if (forward_method == 0)
              origin_packet.first = "G";
-      nextHop = m_neighbors.BestNeighbor (Position, myPos, origin_packet, dst);
+      // MODIFICATION: Send average geometric speed of the current node
+      nextHop = m_neighbors.BestNeighbor (Position, myPos, origin_packet, dst, m_avgGeometricSpeed);
       
       if (nextHop != Ipv4Address::GetZero ())
         {
@@ -1168,8 +1180,8 @@ RoutingProtocol::RouteOutput (Ptr<Packet> p, const Ipv4Header &header,
 
     }
   else
-
-      nextHop = m_neighbors.BestNeighbor (dstPos, myPos,origin_packet, dst);
+      // MODIFICATION: Send average geometric speed of the current node
+      nextHop = m_neighbors.BestNeighbor (dstPos, myPos,origin_packet, dst, m_avgGeometricSpeed);
   if (nextHop != Ipv4Address::GetZero ())
     {
       NS_LOG_DEBUG ("Destination: " << dst);

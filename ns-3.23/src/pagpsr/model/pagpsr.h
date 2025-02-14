@@ -60,7 +60,7 @@ public:
   virtual void NotifyRemoveAddress (uint32_t interface, Ipv4InterfaceAddress address);
   virtual void SetIpv4 (Ptr<Ipv4> ipv4);
   virtual void RecvPAGPSR (Ptr<Socket> socket);
-  virtual void UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos, bool trustStatus);
+  virtual void UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos, Vector LastPos, double AvgSpeed, bool trustStatus);
   virtual void SendHello ();
   virtual bool IsMyOwnAddress (Ipv4Address src);
   float GetPdr ();
