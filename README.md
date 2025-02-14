@@ -23,6 +23,7 @@ Follow these steps to install and configure the modified PA-GPSR protocol in the
     ```
     sudo ./waf install
     ```
-
-## Authors
-- Aditya Eka Bagaskara
+4. Run Modified PA-GPSR simulation
+    ```
+    ./waf --run scratch/pagpsr-main
+    ```
