@@ -136,14 +136,14 @@ GpsrExample::GpsrExample () :
   // Generate capture files for each node
   pcap (false),
   //seed to generate random numbers
-  seed (2),
+  seed (1394),
   path("outputs/"),
   packetsize(512),
   algorithm("pagpsr"),
   newfile(true),
   speed(15),
   drift(0),
-  nPairs(10),
+  nPairs(15),
   phyMode ("OfdmRate3MbpsBW10MHz")
 
 {
@@ -177,59 +177,88 @@ GpsrExample::Configure (int argc, char **argv)
 }
 
 void
-GpsrExample::writeToFile(uint32_t lostPackets, uint32_t totalTx, uint32_t totalRx, double hopCount, double count, double delay) {
+GpsrExample::writeToFile(uint32_t lostPackets, uint32_t totalTx, uint32_t totalRx, double hopCount,double count, double delay){
 
   struct stat buf;
-  std::string outputfile = "results/" + algorithm + "_results/pairs" + std::to_string(nPairs) + "/" + algorithm + std::to_string(size) + "_results.txt";
+    std::string outputfile = "results/"+algorithm+"_results/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
+  //std::string outputfile = "results/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
+  //std::string outputfile = "results/teste.txt";
   int exist = stat(outputfile.c_str(), &buf);
 
   std::ofstream outfile;
   outfile.open(outputfile.c_str(), std::ios::app);
 
-  if (outfile.is_open()) {
-    std::cout << "Output operation successfully performed\n";
-  } else {
+  if (outfile.is_open())
+  {
+    std::cout << "Output operation successfully performed1\n";
+  }
+  else
+  {
     std::cout << "Error opening file";
-    return;
   }
 
-  if (newfile == true && exist != 0) {
-    outfile << "Seed\t" << "LostPackets\t" << "totalTx\t" << "totalRx\t" << "PDR (%)\t" << "HopCount\t" << "Delay (ms)\t" << "PhyRxDrop\t" << "PhyTxDrop\n";
+  if (newfile == true){
+
+   std::ofstream outfile;
+   outfile.open(outputfile.c_str(), std::ios::trunc);
+
+   if (outfile.is_open())
+   {
+     std::cout << "Output operation successfully performed2\n";
+   }
+   else
+   {
+     std::cout << "Error opening file";
+   }
+
+    outfile<< "Seed\t"<<"LostPackets\t"<<"totalTx\t"<<"totalRx\t"<<"PDR (%)\t"<<"HopCount\t"<<"Delay (ms)\t"<<"PhyRxDrop\t"<<"PhyTxDrop\n";
     outfile.flush();
+    exist = 1;
+   }
+
+  if (exist == -1){
+        outfile<< "Seed\t"<<"LostPackets\t"<<"totalTx\t"<<"totalRx\t"<<"PDR (%)\t"<<"HopCount\t"<<"Delay (ms)\t"<<"PhyRxDrop\t"<<"PhyTxDrop\n";
+        outfile.flush();
   }
 
   // write to outfile
-  outfile << seed << "\t"; // Seed
+  outfile <<seed<<"\t"; //Lost packets
   outfile.flush();
-  outfile << lostPackets << "\t"; // Lost packets
+  outfile <<lostPackets<<"\t"; //Lost packets
   outfile.flush();
-  outfile << (double) totalTx << "\t"; // Total transmitted packets
+  outfile <<(double)totalTx<<"\t"; //Total transmited packets
   outfile.flush();
-  outfile << (double) totalRx << "\t"; // Total received packets
+  outfile <<(double)totalRx<<"\t"; //Total received packets
   outfile.flush();
+ 
+  if (count == 0){
 
-  if (count == 0) {
-    outfile << 0 << "\t"; // PDR
+    outfile <<0<<"\t"; //PDR
     outfile.flush();
-    outfile << 0 << "\t"; // Mean Hop Count
+    outfile <<0<<"\t"; //Mean Hop Count
     outfile.flush();
-    outfile << 0 << "\t"; // Mean Delay (ms)
+    outfile <<0<<"\t"; //Mean Delay (ms)
     outfile.flush();
-  } else {
-    outfile << std::fixed << std::setprecision(2) << ((double) totalRx / (double) totalTx) * 100.0 << "\t"; // PDR
+
+  }else{
+
+    outfile <<std::fixed<<std::setprecision(2)<< ((double)totalRx/(double)totalTx)*100.0<<"\t"; //PDR
     outfile.flush();
-    outfile << std::fixed << std::setprecision(2) << hopCount / count << "\t"; // Mean Hop Count
+    outfile <<std::fixed<<std::setprecision(2)<< hopCount/count<<"\t"; //Mean Hop Count
     outfile.flush();
-    outfile << std::fixed << std::setprecision(2) << delay / count * 1000 << "\t"; // Mean Delay (ms)
+    outfile <<std::fixed<<std::setprecision(2)<< delay/count * 1000<<"\t"; //Mean Delay (ms)
     outfile.flush();
+
   }
 
-  outfile << rx_drop << "\t"; // PhyRxDrop
+  outfile <<rx_drop<<"\t";
   outfile.flush();
-  outfile << tx_drop << "\n"; // PhyTxDrop
+  outfile <<tx_drop<<"\n";
   outfile.flush();
 
   outfile.close();
+
+
 }
 
 void
