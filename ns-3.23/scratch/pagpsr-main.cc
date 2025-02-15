@@ -60,7 +60,7 @@ void handler (int arg0)
 class GpsrExample
 {
 public:
-  GpsrExample (uint32_t size, uint32_t seed, uint32_t nPairs);
+  GpsrExample ();
   /// Configure script parameters, \return true on successful configuration
   bool Configure (int argc, char **argv);
   /// Run simulation
@@ -112,45 +112,42 @@ private:
 
 };
 
-int main(int argc, char ** argv) {
-  GpsrExample test(50, 2, 10);
-  if (!test.Configure(argc, argv))
-    NS_FATAL_ERROR("Configuration failed. Aborted.");
-  test.Run();
-  test.Report(std::cout);
+int main (int argc, char **argv)
+{
+  GpsrExample test;
+  if (! test.Configure(argc, argv))
+    NS_FATAL_ERROR ("Configuration failed. Aborted.");
 
-  GpsrExample test2(50, 3, 10);
-  if (!test2.Configure(argc, argv))
-    NS_FATAL_ERROR("Configuration failed. Aborted.");
-  test2.Run();
-  test2.Report(std::cout);
-
+  test.Run ();
+  test.Report (std::cout);
   return 0;
 }
 
 //-----------------------------------------------------------------------------
-GpsrExample::GpsrExample(uint32_t size, uint32_t seed, uint32_t nPairs):
+GpsrExample::GpsrExample () :
   // Number of Nodes
-  size(size),
+  size (30),
   // Grid Width
   gridWidth(10),
   // Distance between nodes
-  step(100),
+  step (100),
   // Simulation time
-  totalTime(200),
+  totalTime (200),
   // Generate capture files for each node
-  pcap(false),
+  pcap (false),
   //seed to generate random numbers
-  seed(seed),
+  seed (2),
   path("outputs/"),
   packetsize(512),
   algorithm("pagpsr"),
   newfile(true),
   speed(15),
   drift(0),
-  nPairs(nPairs),
-  phyMode("OfdmRate3MbpsBW10MHz")
-{}
+  nPairs(10),
+  phyMode ("OfdmRate3MbpsBW10MHz")
+
+{
+}
 
 
 bool
