@@ -33,167 +33,207 @@ Follow these steps to install and configure the modified PA-GPSR protocol in the
 ### 5 Connection Pairs
 #### 30 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=30 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 50 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=50 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 70 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=70 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 90 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=90 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 110 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=5 --size=110 --seed=$seed --newfile=false"
+    fi
+done
 ```
 
 ### 10 Connection Pairs
 #### 30 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=30 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 50 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=50 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 70 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=70 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 90 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=90 --seed=$seed --newfile=false"
+    fi
+done
 ```
 #### 110 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=10 --size=110 --seed=$seed --newfile=false"
+    fi
+done
 ```
 
 ### 15 Connection Pairs
 #### 30 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=30 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 50 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=50 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 70 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=70 --seed=$seed --newfile=false"
+    fi
+done  
 ```
 #### 90 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=90 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 110 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=15 --size=110 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 
 ### 20 Connection Pairs
 #### 30 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=30 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 50 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=50 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 70 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=70 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 90 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=90 --seed=$seed --newfile=false"
+    fi
+done 
 ```
 #### 110 Nodes
 ```
-./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=100" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=200 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=300 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=400 --newfile=false" &&
-./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=500 --newfile=false" 
+for seed in $(seq 100 100 1000); do
+    if [ $seed -eq 100 ]; then
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=$seed"
+    else
+        ./waf --run "scratch/pagpsr-main --conn=20 --size=110 --seed=$seed --newfile=false"
+    fi
+done 
 ```
