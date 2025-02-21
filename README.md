@@ -28,6 +28,12 @@ Follow these steps to install and configure the modified PA-GPSR protocol in the
     ./waf --run scratch/pagpsr-main
     ```
 
+## Generate Mobility Files
+```
+sumo -c 2025-02-21-09-51-08/osm.sumocfg --fcd-output 2025-02-21-09-51-08/trace.xml
+python traceExporter.py -i 2025-02-21-09-51-08/trace.xml --ns2mobility-output=2025-02-21-09-51-08/mobility.tcl
+```
+
 ## Simulation Scenario:
 
 ### 5 Connection Pairs
