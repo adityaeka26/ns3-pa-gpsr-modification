@@ -96,6 +96,7 @@ private:
   int speed;
   uint32_t drift;
   uint32_t nPairs;
+  std::string scenario;
 
   
   NodeContainer AllNodes;
@@ -144,7 +145,8 @@ GpsrExample::GpsrExample () :
   speed(15),
   drift(0),
   nPairs(15),
-  phyMode ("OfdmRate3MbpsBW10MHz")
+  phyMode("OfdmRate3MbpsBW10MHz"),
+  scenario("grid")
 
 {
 }
@@ -166,6 +168,7 @@ GpsrExample::Configure (int argc, char **argv)
   cmd.AddValue ("algorithm", "routing algorithm", algorithm);
   cmd.AddValue ("newfile", "create new result file", newfile);
   cmd.AddValue ("speed", "node speed", speed);
+  cmd.AddValue ("scenario", "grid or real", scenario);
 
 // disable fragmentation for frames below 2200 bytes
   Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue ("2200"));
@@ -180,7 +183,7 @@ void
 GpsrExample::writeToFile(uint32_t lostPackets, uint32_t totalTx, uint32_t totalRx, double hopCount,double count, double delay){
 
   struct stat buf;
-    std::string outputfile = "results/"+algorithm+"_results/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
+  std::string outputfile = "results/"+algorithm+"_results/"+scenario+"/speed"+std::to_string(speed)+"/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
   //std::string outputfile = "results/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
   //std::string outputfile = "results/teste.txt";
   int exist = stat(outputfile.c_str(), &buf);
@@ -211,18 +214,20 @@ GpsrExample::writeToFile(uint32_t lostPackets, uint32_t totalTx, uint32_t totalR
      std::cout << "Error opening file";
    }
 
-    outfile<< "Seed\t"<<"LostPackets\t"<<"totalTx\t"<<"totalRx\t"<<"PDR (%)\t"<<"HopCount\t"<<"Delay (ms)\t"<<"PhyRxDrop\t"<<"PhyTxDrop\n";
+    outfile<< "Seed\t"<<"Scenario\t"<<"LostPackets\t"<<"totalTx\t"<<"totalRx\t"<<"PDR (%)\t"<<"HopCount\t"<<"Delay (ms)\t"<<"PhyRxDrop\t"<<"PhyTxDrop\n";
     outfile.flush();
     exist = 1;
    }
 
   if (exist == -1){
-        outfile<< "Seed\t"<<"LostPackets\t"<<"totalTx\t"<<"totalRx\t"<<"PDR (%)\t"<<"HopCount\t"<<"Delay (ms)\t"<<"PhyRxDrop\t"<<"PhyTxDrop\n";
+        outfile<< "Seed\t"<<"Scenario\t"<<"LostPackets\t"<<"totalTx\t"<<"totalRx\t"<<"PDR (%)\t"<<"HopCount\t"<<"Delay (ms)\t"<<"PhyRxDrop\t"<<"PhyTxDrop\n";
         outfile.flush();
   }
 
   // write to outfile
   outfile <<seed<<"\t"; //Lost packets
+  outfile.flush();
+  outfile <<scenario<<"\t";
   outfile.flush();
   outfile <<lostPackets<<"\t"; //Lost packets
   outfile.flush();
@@ -284,7 +289,7 @@ if (algorithm=="gpsr"){
     MMGpsrHelper mmgpsr;
     mmgpsr.Install ();
   }else{
-    std::cout<<"Using PA-GPSR algorithm...\n";
+    std::cout<<"Using Modified PA-GPSR algorithm...\n";
     PAGpsrHelper pagpsr;
     pagpsr.Install ();
 
@@ -292,6 +297,7 @@ if (algorithm=="gpsr"){
 }
   std::cout << "Starting simulation for " << totalTime << " s ...\n";
   std::cout << "Starting simulation for speed " << speed << " ms ...\n";
+  std::cout << "Starting simulation for " << scenario << " scenario ...\n";
 
   for (int i=1; i<=totalTime; i++){
     if (i % 10 == 0) // at every 10s
@@ -360,7 +366,7 @@ GpsrExample::CreateNodes ()
      }
      
   std::string m_traceFile;
-  m_traceFile = "results/tclFiles/speed/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+".tcl";
+  m_traceFile = "results/tclFiles/"+scenario+"/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+".tcl";
   Ns2MobilityHelper mobility= Ns2MobilityHelper (m_traceFile);//for tracefile
   mobility.Install ();
 
