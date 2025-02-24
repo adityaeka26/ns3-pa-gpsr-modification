@@ -183,7 +183,7 @@ void
 GpsrExample::writeToFile(uint32_t lostPackets, uint32_t totalTx, uint32_t totalRx, double hopCount,double count, double delay){
 
   struct stat buf;
-    std::string outputfile = "results/"+algorithm+"_results/"+scenario+"/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
+  std::string outputfile = "results/"+algorithm+"_results/"+scenario+"/speed"+std::to_string(speed)+"/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
   //std::string outputfile = "results/pairs"+std::to_string(nPairs)+"/"+algorithm+std::to_string(size)+"_results.txt";
   //std::string outputfile = "results/teste.txt";
   int exist = stat(outputfile.c_str(), &buf);

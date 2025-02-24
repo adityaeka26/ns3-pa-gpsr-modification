@@ -52,15 +52,18 @@ Follow these steps to install and configure the modified PA-GPSR protocol in the
 ### 10 Connection Pairs
 #### 30 Nodes
 ```
-NODE_SIZE=30
 CONNECTIONS=10
+
 SEED_START=100
 SEED_STEP=100
 SEED_END=1000
-SPEED=35
+
+NODE_SIZE=30
+SPEED=10
 SCENARIO=grid
+NEW_FILE=false
 
 for seed in $(seq $SEED_START $SEED_STEP $SEED_END); do
-    ./waf --run "scratch/pagpsr-main --conn=$CONNECTIONS --size=$NODE_SIZE --seed=$seed --speed=$SPEED --scenario=$SCENARIO --newfile=false"
+    ./waf --run "scratch/pagpsr-main --conn=$CONNECTIONS --size=$NODE_SIZE --seed=$seed --speed=$SPEED --scenario=$SCENARIO --newfile=$NEW_FILE"
 done
 ```
