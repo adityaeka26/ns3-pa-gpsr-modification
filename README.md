@@ -61,10 +61,6 @@ SPEED=35
 SCENARIO=grid
 
 for seed in $(seq $SEED_START $SEED_STEP $SEED_END); do
-    if [ $seed -eq $SEED_START ]; then
-        ./waf --run "scratch/pagpsr-main --conn=$CONNECTIONS --size=$NODE_SIZE --seed=$seed --speed=$SPEED --scenario=$SCENARIO"
-    else
-        ./waf --run "scratch/pagpsr-main --conn=$CONNECTIONS --size=$NODE_SIZE --seed=$seed --speed=$SPEED --scenario=$SCENARIO --newfile=false"
-    fi
+    ./waf --run "scratch/pagpsr-main --conn=$CONNECTIONS --size=$NODE_SIZE --seed=$seed --speed=$SPEED --scenario=$SCENARIO --newfile=false"
 done
 ```
