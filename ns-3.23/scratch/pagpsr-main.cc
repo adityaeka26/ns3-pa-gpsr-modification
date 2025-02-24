@@ -96,6 +96,7 @@ private:
   int speed;
   uint32_t drift;
   uint32_t nPairs;
+  std::string scenario;
 
   
   NodeContainer AllNodes;
@@ -144,7 +145,8 @@ GpsrExample::GpsrExample () :
   speed(15),
   drift(0),
   nPairs(15),
-  phyMode ("OfdmRate3MbpsBW10MHz")
+  phyMode ("OfdmRate3MbpsBW10MHz"),
+  scenario("grid"),
 
 {
 }
@@ -166,6 +168,7 @@ GpsrExample::Configure (int argc, char **argv)
   cmd.AddValue ("algorithm", "routing algorithm", algorithm);
   cmd.AddValue ("newfile", "create new result file", newfile);
   cmd.AddValue ("speed", "node speed", speed);
+  cmd.AddValue ("scenario", "grid or real", scenario);
 
 // disable fragmentation for frames below 2200 bytes
   Config::SetDefault ("ns3::WifiRemoteStationManager::FragmentationThreshold", StringValue ("2200"));
@@ -360,7 +363,7 @@ GpsrExample::CreateNodes ()
      }
      
   std::string m_traceFile;
-  m_traceFile = "results/tclFiles/speed/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+".tcl";
+  m_traceFile = "results/tclFiles/"+scenario+"/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+".tcl";
   Ns2MobilityHelper mobility= Ns2MobilityHelper (m_traceFile);//for tracefile
   mobility.Install ();
 
