@@ -366,7 +366,7 @@ GpsrExample::CreateNodes ()
      }
      
   std::string m_traceFile;
-  m_traceFile = "results/tclFiles/"+scenario+"/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+".tcl";
+  m_traceFile = "results/tclFiles/"+scenario+"/"+std::to_string(speed)+"/newNs2mobility"+std::to_string(size)+"modified.tcl";
   Ns2MobilityHelper mobility= Ns2MobilityHelper (m_traceFile);//for tracefile
   mobility.Install ();
 
