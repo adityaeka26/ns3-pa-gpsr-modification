@@ -54,12 +54,12 @@ Follow these steps to install and configure the modified PA-GPSR protocol in the
 ```
 CONNECTIONS=10
 
-SEED_START=100
+SEED_START=4600
 SEED_STEP=100
-SEED_END=1000
+SEED_END=5000
 
-NODE_SIZE=30
-SPEED=10
+NODE_SIZE=90
+SPEED=15
 SCENARIO=grid
 NEW_FILE=false
 
