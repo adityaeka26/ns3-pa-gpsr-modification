@@ -1,4 +1,5 @@
-Seed	Scenario	LostPackets	totalTx	totalRx	PDR (%)	HopCount	Delay (ms)	PhyRxDrop	PhyTxDrop100	grid	2779	7285	4382	60.15	4.14	33.77	304233	0
+Seed	Scenario	LostPackets	totalTx	totalRx	PDR (%)	HopCount	Delay (ms)	PhyRxDrop	PhyTxDrop
+100	grid	2779	7285	4382	60.15	4.14	33.77	304233	0
 200	grid	2876	7200	4205	58.40	4.01	29.94	287673	0
 300	grid	2813	7314	4383	59.93	4.24	36.28	302953	0
 400	grid	2876	7287	4293	58.91	4.14	26.23	290227	0
